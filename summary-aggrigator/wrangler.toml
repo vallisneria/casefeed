@@ -1,0 +1,19 @@
+name = "casefeed-summary-aggrigator"
+main = "build/worker/shim.mjs"
+compatibility_date = "2024-10-19"
+
+workers_dev = false
+
+[build]
+command = "cargo install -q worker-build && worker-build --release"
+
+[observability]
+enabled = true
+
+[triggers]
+crons = ["*/5 * * * *"]
+
+[[d1_databases]]
+database_name = "casefeed-db"
+binding = "DB"
+database_id = "b48a3483-2f57-42fa-a677-800d88b9738e"
