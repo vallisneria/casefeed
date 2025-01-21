@@ -1,0 +1,2 @@
+[workspace]
+members = ["ccourt-batch", "casefeed-web", "court-api"]
