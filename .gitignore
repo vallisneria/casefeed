@@ -3,3 +3,6 @@ target/
 build/
 .wrangler/
 .DS_Store
+
+.vscode/
+.zed/
