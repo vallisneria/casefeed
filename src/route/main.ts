@@ -9,7 +9,9 @@ export async function ccourt_enbank(_c: Context) {
   const item = (await search.search()).map(
     (item: ConstitutionalCase): RssItem => {
       return {
-        title: `${item.case_title} (헌법재판소 ${item.decision_date.replaceAll("-", ". ")}. 자 ${item.case_code} ${item.bench_type} 결정)`,
+        title:
+          `${item.case_title} ${item.case_nickname ? "〈" + item.case_nickname + "〉 " : ""}` +
+          `(헌법재판소 ${item.decision_date.replaceAll("-", ". ")}. 자 ${item.case_code} ${item.bench_type} 결정)`,
         link: `https://casenote.kr/헌법재판소/${item.case_code.replace(/등$/gi, "")}`,
         author: "헌법재판소",
         pub_date: item.decision_date,
