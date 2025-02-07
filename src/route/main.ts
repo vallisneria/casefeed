@@ -59,7 +59,7 @@ export async function scourt_enbank(_c: Context) {
           `(${item.court_name} ${item.decision_date.toString().replaceAll("-", ". ")}.${sngo} ${item.case_code} ${item.en_bank ? "전원합의체 " : ""}${item.decision_type})`,
         link: `https://casenote.kr/${item.court_name}/${item.case_code.replace(/등$/gi, "")}`,
         author: item.court_name,
-        pub_date: `${temporal_to_rfc822(item.decision_date.toZonedDateTime("14:00:00+0900"))}`,
+        pub_date: `${temporal_to_rfc822(item.decision_date.toZonedDateTime({ plainTime: "14:00:00", timeZone: "+0900" }))}`,
         guid: {
           value: `${item.court_name}_${item.case_code}`,
           is_permalink: false,
@@ -86,7 +86,7 @@ export async function scourt_enbank(_c: Context) {
 export async function scourt_bulletin(_c: Context) {
   const start = new Temporal.PlainDate(2000, 1, 1);
   const end = new Temporal.PlainDate(9999, 12, 31);
-  const item = (await get_case(30, start, end, "01")).map(
+  const item = (await get_case(30, start, end, "02")).map(
     (item: CourtCase): RssItem => {
       let sngo;
       switch (item.decision_type) {
@@ -105,7 +105,7 @@ export async function scourt_bulletin(_c: Context) {
           `(${item.court_name} ${item.decision_date.toString().replaceAll("-", ". ")}.${sngo} ${item.case_code} ${item.en_bank ? "전원합의체 " : ""}${item.decision_type})`,
         link: `https://casenote.kr/${item.court_name}/${item.case_code.replace(/등$/gi, "")}`,
         author: item.court_name,
-        pub_date: `${temporal_to_rfc822(item.decision_date.toZonedDateTime("14:00:00+0900"))}`,
+        pub_date: `${temporal_to_rfc822(item.decision_date.toZonedDateTime({ plainTime: "14:00:00", timeZone: "+0900" }))}`,
         guid: {
           value: `${item.court_name}_${item.case_code}`,
           is_permalink: false,
