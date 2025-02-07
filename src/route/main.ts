@@ -69,6 +69,8 @@ export async function scourt_enbank(_c: Context) {
     },
   );
 
+  console.log(item);
+
   const option: RssChannelConfig = {
     title: "대법원 전원합의체",
     link: "https://vallisneria-casefeed.deno.dev",
@@ -152,6 +154,6 @@ function temporal_to_rfc822(datetime: Temporal.ZonedDateTime): string {
   return (
     `${day_of_week}, ${datetime.day.toString().padStart(2, "0")} ${month} ${datetime.year} ` +
     `${datetime.hour.toString().padStart(2, "0")}:${datetime.minute.toString().padStart(2, "0")}:` +
-    `${datetime.second.toString().padStart(2, "0")} ${datetime.timeZoneId}`
+    `${datetime.second.toString().padStart(2, "0")} +09:00`
   );
 }
