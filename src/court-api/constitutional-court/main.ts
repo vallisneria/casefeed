@@ -1,3 +1,4 @@
+import { USER_AGENT } from "../main.ts";
 import {
   ConstitutionalCaseType,
   ConstitutionalDecisionType,
@@ -154,7 +155,7 @@ export class ConstitutionalCaseSearch {
       method: "POST",
       body: new URLSearchParams(this.buildBody()),
       headers: {
-        "User-Agent": "Mozilla/5.0",
+        "User-Agent": USER_AGENT,
         "Content-type": "application/x-www-form-urlencoded; charset=UTF-8",
       },
     });
