@@ -1,18 +1,16 @@
-use std::{error::Error, fmt::Display};
+use thiserror::Error;
 
-#[derive(Debug)]
+#[derive(Debug, Error)]
 pub enum CourtApiError {
-    UnexpectedValue,
-}
+    #[error("{0}")]
+    HttpError(#[from] reqwest::Error),
 
-impl Error for CourtApiError {}
+    #[error("{0}")]
+    JsonParseError(#[from] serde_json::Error),
 
-impl Display for CourtApiError {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        let message = match self {
-            Self::UnexpectedValue => "Unexpected Value",
-        };
+    #[error("{0}")]
+    UrlParseError(#[from] url::ParseError),
 
-        write!(f, "{}", message)
-    }
+    #[error("HTTP Status Code: {0}")]
+    HttpStatusNotOk(u16),
 }
