@@ -3,8 +3,7 @@
 .zed/
 .vscode/
 target/
-
+*secret.yaml
 
 # Added by cargo
-
 /target

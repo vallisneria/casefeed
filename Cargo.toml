@@ -1,2 +1,2 @@
 [workspace]
-members = ["ccourt-batch", "casefeed-web", "court-api"]
+members = ["court-crawler", "casefeed-web", "court-api", "ccourt-crawler"]

@@ -11,4 +11,5 @@ pub use case_type::ConstitutionCaseType;
 pub use decision_type::ConstitutionDecisionType;
 pub use precedent::ConstitutionalPrecedent;
 pub use record_type::RecordType;
+pub use search_param::ConstitutionalPrecedentSearchParam;
 pub use sort_type::SortType;

@@ -1,4 +1,8 @@
-use crate::{traits::HasUrl, util::integer_date_to_naive_date, CaseProvider};
+use crate::{
+    traits::HasUrl,
+    util::{integer_date_to_naive_date, replace_middle_dot},
+    CaseProvider,
+};
 use chrono::NaiveDate;
 use serde::{de::Deserializer, Deserialize, Serialize};
 
@@ -11,9 +15,12 @@ pub struct ConstitutionalPrecedent {
     pub id: u64,
 
     #[serde(alias = "eventName")]
+    #[serde(deserialize_with = "case_title")]
     pub case_title: String,
 
+    #[serde(default)]
     #[serde(alias = "eventNickname")]
+    #[serde(deserialize_with = "case_subtitle")]
     pub case_subtitle: Option<String>,
 
     #[serde(alias = "eventNo")]
@@ -33,7 +40,7 @@ pub struct ConstitutionalPrecedent {
     #[serde(alias = "judgementNote")]
     #[serde(deserialize_with = "judgement_note")]
     #[serde(default)]
-    judgement_note: Option<Vec<String>>,
+    pub judgement_note: Option<Vec<String>>,
 }
 
 impl HasUrl for ConstitutionalPrecedent {
@@ -63,6 +70,26 @@ where
     Ok(result)
 }
 
+fn case_title<'de, D>(deserializer: D) -> Result<String, D::Error>
+where
+    D: Deserializer<'de>,
+{
+    let s: String = Deserialize::deserialize(deserializer)?;
+    let result = replace_middle_dot(&s);
+
+    Ok(result)
+}
+
+fn case_subtitle<'de, D>(deserializer: D) -> Result<Option<String>, D::Error>
+where
+    D: Deserializer<'de>,
+{
+    let s: Option<String> = Deserialize::deserialize(deserializer)?;
+    let result = s.map(|x| replace_middle_dot(&x));
+
+    Ok(result)
+}
+
 fn is_enbanc<'de, D>(deserializer: D) -> Result<bool, D::Error>
 where
     D: Deserializer<'de>,
@@ -78,7 +105,7 @@ where
     let s: Option<String> = Deserialize::deserialize(deserializer)?;
 
     if let Some(data) = s {
-        let result = data
+        let result = replace_middle_dot(&data)
             .split("\u{A0}")
             .map(|x| x.trim().to_string())
             .filter(|x| x.len() != 0)
