@@ -1,0 +1,204 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: init-db-config
+data:
+  init.sql: |
+    CREATE TABLE IF NOT EXISTS court_case (
+      collected_time TIMESTAMPTZ NOT NULL default now (), -- 이 판례를 처음으로 발견한 시간
+      case_title TEXT NOT NULL,
+      case_subtitle TEXT,
+      case_code TEXT NOT NULL,
+      court_name TEXT NOT NULL,
+      case_type TEXT NOT NULL,
+      decision_date DATE NOT NULL,
+      en_bank BOOLEAN NOT NULL
+      decision_type TEXT NOT NULL,
+      summary TEXT[] NOT NULL, -- 판시사항
+      PRIMARY key (court_name, case_code)
+    );
+
+    CREATE TABLE IF NOT EXISTS constitutional_case (
+      collected_time TIMESTAMPTZ NOT NULL default now (), -- 이 판례를 처음으로 발견한 시간
+      case_title TEXT NOT NULL,
+      case_subtitle TEXT,
+      case_code TEXT NOT NULL PRIMARY KEY,
+      record_type TEXT NOT NULL,
+      decision_date DATE NOT NULL,
+      judgement_note TEXT[] -- 결정요지
+    );
+
+    CREATE TABLE IF NOT EXISTS court_bulletin (
+      collected_time TIMESTAMPTZ NOT NULL default now (), -- 해당 판례가 공보에 포함된다는 것을 처음으로 발견한 시간
+      court_name TEXT NOT NULL,
+      case_code TEXT NOT NULL,
+      bulletin_code TEXT NOT NULL PRIMARY KEY,
+      UNIQUE (court_name, case_code),
+      FOREIGN KEY (court_name, case_code) REFERENCES court_case (court_name, case_code) ON DELETE CASCADE
+    );
+
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: database
+spec:
+  serviceName: database
+  replicas: 1
+  selector:
+    matchLabels:
+      app: database
+  template:
+    metadata:
+      labels:
+        app: database
+    spec:
+      containers:
+        - name: database
+          image: postgres:17
+          ports:
+            - containerPort: 5432
+          env:
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  name: db-credentials
+                  key: username
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: db-credentials
+                  key: password
+          volumeMounts:
+            - name: db-data
+              mountPath: /var/lib/postgresql/data
+            - name: init-db-script
+              mountPath: /docker-entrypoint-initdb.d
+      volumes:
+        - name: init-db-script
+          configMap:
+            name: init-db-config
+  volumeClaimTemplates:
+    - metadata:
+        name: db-data
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        resources:
+          requests:
+            storage: 10Gi
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: database
+spec:
+  selector:
+    app: database
+  ports:
+    - port: 5432
+      targetPort: 5432
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: casefeed
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: casefeed
+  template:
+    metadata:
+      labels:
+        app: casefeed
+    spec:
+      containers:
+        - name: casefeed
+          image: nginx:latest
+          ports:
+            - containerPort: 8080
+          env:
+            - name: DB_HOST
+              value: database
+            - name: DB_USER
+              valueFrom:
+                secretKeyRef:
+                  name: db-credentials
+                  key: username
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: db-credentials
+                  key: password
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: casefeed
+spec:
+  selector:
+    app: casefeed
+  ports:
+    - port: 80
+      targetPort: 8080
+  type: LoadBalancer
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: court-crawler
+spec:
+  schedule: "*/5 * * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+            - name: court-crawler
+              image: your-periodic-job-1-image:tag
+              env:
+                - name: DB_HOST
+                  value: database
+                - name: DB_USER
+                  valueFrom:
+                    secretKeyRef:
+                      name: db-credentials
+                      key: username
+                - name: DB_PASSWORD
+                  valueFrom:
+                    secretKeyRef:
+                      name: db-credentials
+                      key: password
+          restartPolicy: OnFailure
+
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: ccourt-crawler
+spec:
+  schedule: "*/5 * * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+            - name: ccourt-crawler
+              image: your-periodic-job-2-image:tag
+              env:
+                - name: DB_HOST
+                  value: database
+                - name: DB_USER
+                  valueFrom:
+                    secretKeyRef:
+                      name: db-credentials
+                      key: username
+                - name: DB_PASSWORD
+                  valueFrom:
+                    secretKeyRef:
+                      name: db-credentials
+                      key: password
+          restartPolicy: OnFailure
