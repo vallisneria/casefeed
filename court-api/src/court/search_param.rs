@@ -1,6 +1,6 @@
 use crate::{error::CourtApiError, CourtPrecedent};
 
-use super::{PrecedentGrade, SortType};
+use super::{PrecedentGrade, CourtSortType};
 use crate::court::util::portal_request;
 use chrono::{Datelike, NaiveDate};
 use serde::{Serialize, Serializer};
@@ -15,7 +15,7 @@ pub struct CourtPrecedentSearchParam {
     sort: String,
 
     /// 정렬 방법
-    sort_type: SortType,
+    sort_type: CourtSortType,
 
     search_range: String,
 
@@ -101,7 +101,7 @@ impl Default for CourtPrecedentSearchParam {
             sort: String::from(
                 "prnjdg_ymd_o desc, jis_jdcpc_instn_dvs_cd_s asc, jdcpct_gr_cd_s asc",
             ),
-            sort_type: SortType::DecisionDateDesc,
+            sort_type: CourtSortType::DecisionDateDesc,
             search_range: String::new(),
             tpc_jdcpct_cs_als_yn: String::new(),
             case_code: String::new(),
@@ -149,7 +149,7 @@ impl CourtPrecedentSearchParam {
     /// // 선고일자 내림차순으로 정렬
     /// search.set_sort_type(SortType::DecisionDateDesc);
     /// ```
-    pub fn set_sort_type(mut self, value: SortType) -> Self {
+    pub fn set_sort_type(mut self, value: CourtSortType) -> Self {
         self.sort_type = value;
         self
     }

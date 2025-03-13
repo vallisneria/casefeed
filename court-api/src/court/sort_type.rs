@@ -1,7 +1,7 @@
 use serde::Serialize;
 
 #[derive(Debug, Serialize, Clone, Copy, Default)]
-pub enum SortType {
+pub enum CourtSortType {
     /// 정확도
     #[serde(rename(serialize = "정확도"))]
     Accuracy,

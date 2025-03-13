@@ -1,2 +1,17 @@
 [workspace]
-members = ["court-crawler", "casefeed-web", "court-api", "ccourt-crawler"]
+members = ["court-crawler", "casefeed-web", "court-api", "ccourt-crawler", "db"]
+
+[workspace.dependencies]
+tokio = { version = "1.42.0", features = ["full"] }
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+url = { version = "2", features = ["serde"] }
+chrono = { version = "0.4", features = ["serde"] }
+sqlx = { version = "0.8", features = [
+    "runtime-tokio",
+    "tls-rustls",
+    "postgres",
+    "chrono",
+    "derive",
+    "macros",
+] }

@@ -13,4 +13,4 @@ pub use court_type::CourtType;
 pub use decision_type::DecisionType;
 pub use precedent_grade::PrecedentGrade;
 pub use search_param::CourtPrecedentSearchParam;
-pub use sort_type::SortType;
+pub use sort_type::CourtSortType;

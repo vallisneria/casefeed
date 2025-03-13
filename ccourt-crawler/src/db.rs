@@ -1,5 +1,4 @@
 use court_api::ConstitutionalPrecedent;
-use serde_json::to_value;
 use sqlx::postgres::PgPool;
 use std::error::Error as StdErr;
 

@@ -4,14 +4,8 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-tokio = { version = "1.42.0", features = ["full"] }
+tokio.workspace = true
+serde_json.workspace = true
+sqlx.workspace = true
+
 court-api = { path = "../court-api" }
-serde_json = "1.0"
-sqlx = { version = "0.8", features = [
-    "runtime-tokio",
-    "tls-native-tls",
-    "postgres",
-    "chrono",
-    "derive",
-    "macros",
-] }
