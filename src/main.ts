@@ -6,7 +6,7 @@ const app = new Hono();
 
 app.use("/favicon.ico", serveStatic({ path: "./static/favicon.ico" }));
 
-app.get("/", (c) => c.text("Hono!"));
+app.use("/", serveStatic({ path: "./static/index.txt" }));
 app.get("/헌법재판소/판례공보", ccourt_enbank);
 app.get("/대법원/전원합의체", scourt_enbank);
 app.get("/대법원/판례공보", scourt_bulletin);
