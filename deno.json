@@ -11,7 +11,7 @@
   },
   "deploy": {
     "project": "e4212147-7180-45b8-b619-0b92e5f6f1e1",
-    "exclude": ["**/node_modules"],
+    "exclude": ["**/node_modules", ".git", "target"],
     "include": [],
     "entrypoint": "src/main.ts"
   }
