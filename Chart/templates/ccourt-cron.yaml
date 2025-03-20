@@ -1,0 +1,42 @@
+{{- if .Values.dataCollectors.ccourt.enabled }}
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: {{ include "my-app.fullname" . }}-ccourt-crawler
+  labels:
+    {{- include "my-app.labels" . | nindent 4 }}
+spec:
+  schedule: {{ .Values.dataCollectors.ccourt.schedule | quote }}
+  jobTemplate:
+    spec:
+      template:
+        metadata:
+          labels:
+            {{- include "my-app.selectorLabels" . | nindent 12 }}
+        spec:
+          containers:
+          - name: {{ .Chart.Name }}-ccourt-crawler
+            image: "{{ .Values.dataCollectors.ccourt.image.repository }}:{{ .Values.dataCollectors.ccourt.image.tag }}"
+            imagePullPolicy: {{ .Values.dataCollectors.ccourt.image.pullPolicy }}
+            env:
+              - name: DB_HOST
+                value: {{ include "my-app.postgresql.host" . }}
+              - name: DB_PORT
+                value: {{ include "my-app.postgresql.port" . | quote }}
+              - name: DB_NAME
+                value: {{ include "my-app.postgresql.database" . }}
+              - name: DB_USER
+                value: {{ include "my-app.postgresql.username" . }}
+              - name: DB_PASSWORD
+                valueFrom:
+                  secretKeyRef:
+                    name: {{ include "my-app.postgresql.secretName" . }}
+                    key: {{ include "my-app.postgresql.secretKey" . }}
+              {{- range .Values.dataCollectors.ccourt.env }}
+              - name: {{ .name }}
+                value: {{ .value }}
+              {{- end }}
+            resources:
+              {{- toYaml .Values.dataCollectors.ccourt.resources | nindent 14 }}
+          restartPolicy: OnFailure
+{{- end }}

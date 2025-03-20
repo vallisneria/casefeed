@@ -1,0 +1,103 @@
+# 웹 서비스 설정
+webService:
+  image:
+    repository: nginx
+    tag: latest
+    pullPolicy: IfNotPresent
+  replicaCount: 1
+  resources:
+    limits:
+      cpu: 500m
+      memory: 512Mi
+    requests:
+      cpu: 100m
+      memory: 256Mi
+  service:
+    type: ClusterIP
+    port: 80
+
+# 데이터 수집기 설정
+dataCollectors:
+  court:
+    enabled: true
+    image:
+      repository: "registry.gitlab.com/vallisneria/casefeed/court-crawler"
+      tag: latest
+      pullPolicy: IfNotPresent
+    schedule: "*/5 * * * *"
+    resources:
+      limits:
+        cpu: 300m
+        memory: 256Mi
+      requests:
+        cpu: 100m
+        memory: 128Mi
+    env: []
+
+  ccourt:
+    enabled: true
+    image:
+      repository: "registry.gitlab.com/vallisneria/casefeed/ccourt-crawler"
+      tag: latest
+      pullPolicy: IfNotPresent
+    schedule: "*/5 * * * *"
+    resources:
+      limits:
+        cpu: 300m
+        memory: 256Mi
+      requests:
+        cpu: 100m
+        memory: 128Mi
+    env: []
+
+# PostgreSQL 설정
+postgresql:
+  auth:
+    username: casefeed
+    password: "aaaa"
+    database: casefeed
+
+  primary:
+    persistence:
+      enabled: true
+      size: 8Gi
+
+    initdb:
+      scripts:
+        00_init.sh: |
+          #!/bin/bash
+          echo "Hello, World!"
+
+        01_init.sql: |
+          CREATE TABLE IF NOT EXISTS court_case (
+            collected_time TIMESTAMPTZ NOT NULL default now (), -- 이 판례를 처음으로 발견한 시간
+            case_title TEXT NOT NULL,
+            case_subtitle TEXT,
+            case_code TEXT NOT NULL,
+            court_name TEXT NOT NULL,
+            case_type TEXT NOT NULL,
+            decision_date DATE NOT NULL,
+            en_banc BOOLEAN NOT NULL,
+            decision_type TEXT NOT NULL,
+            summary TEXT[] NOT NULL, -- 판시사항
+            PRIMARY key (court_name, case_code)
+          );
+
+          CREATE TABLE IF NOT EXISTS constitutional_case (
+            collected_time TIMESTAMPTZ NOT NULL default now (), -- 이 판례를 처음으로 발견한 시간
+            case_title TEXT NOT NULL,
+            case_subtitle TEXT,
+            case_code TEXT NOT NULL PRIMARY KEY,
+            record_type TEXT NOT NULL,
+            decision_date DATE NOT NULL,
+            judgement_note TEXT[] -- 결정요지
+          );
+
+          CREATE TABLE IF NOT EXISTS court_bulletin (
+            collected_time TIMESTAMPTZ NOT NULL default now (), -- 해당 판례가 공보에 포함된다는 것을 처음으로 발견한 시간
+            court_name TEXT NOT NULL,
+            case_code TEXT NOT NULL,
+            bulletin_code TEXT NOT NULL PRIMARY KEY,
+            UNIQUE (court_name, case_code),
+            FOREIGN KEY (court_name, case_code) REFERENCES court_case (court_name, case_code) ON DELETE CASCADE
+          );

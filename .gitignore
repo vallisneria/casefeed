@@ -4,6 +4,7 @@
 .vscode/
 target/
 *secret.yaml
+*.tgz
 
 # Added by cargo
 /target

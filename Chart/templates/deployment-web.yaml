@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "my-app.fullname" . }}-web
+  labels:
+    {{- include "my-app.labels" . | nindent 4 }}
+    app.kubernetes.io/component: web
+spec:
+  replicas: {{ .Values.webService.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "my-app.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: web
+  template:
+    metadata:
+      labels:
+        {{- include "my-app.selectorLabels" . | nindent 8 }}
+        app.kubernetes.io/component: web
+    spec:
+      containers:
+        - name: {{ .Chart.Name }}-web
+          image: "{{ .Values.webService.image.repository }}:{{ .Values.webService.image.tag }}"
+          imagePullPolicy: {{ .Values.webService.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: 80
+              protocol: TCP
+          env:
+            - name: DB_HOST
+              value: {{ include "my-app.postgresql.host" . }}
+            - name: DB_PORT
+              value: {{ include "my-app.postgresql.port" . | quote }}
+            - name: DB_NAME
+              value: {{ include "my-app.postgresql.database" . }}
+            - name: DB_USER
+              value: {{ include "my-app.postgresql.username" . }}
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "my-app.postgresql.secretName" . }}
+                  key: {{ include "my-app.postgresql.secretKey" . }}
+          livenessProbe:
+            httpGet:
+              path: /
+              port: http
+          readinessProbe:
+            httpGet:
+              path: /
+              port: http
+          resources:
+            {{- toYaml .Values.webService.resources | nindent 12 }}
