@@ -1,0 +1,10 @@
+[package]
+name = "db"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+sqlx.workspace = true
+court-api.workspace = true
+chrono.workspace = true
+thiserror.workspace = true

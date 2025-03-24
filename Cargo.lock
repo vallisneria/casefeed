@@ -175,7 +175,9 @@ name = "casefeed-web"
 version = "0.1.0"
 dependencies = [
  "axum",
+ "chrono",
  "court-api",
+ "sqlx",
  "tokio",
 ]
 
@@ -315,6 +317,12 @@ dependencies = [
 [[package]]
 name = "db"
 version = "0.1.0"
+dependencies = [
+ "chrono",
+ "court-api",
+ "sqlx",
+ "thiserror 2.0.11",
+]
 
 [[package]]
 name = "der"
