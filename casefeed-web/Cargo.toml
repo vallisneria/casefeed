@@ -4,7 +4,8 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
+axum.workspace = true
+chrono.workspace = true
+court-api.workspace = true
+sqlx.workspace = true
 tokio.workspace = true
-
-axum = "0.8.1"
-court-api = { path = "../court-api" }
