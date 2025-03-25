@@ -1,12 +1,11 @@
-mod db;
-
 use court_api::{CourtPrecedentSearchParam, PrecedentGrade};
+use db;
 use sqlx::postgres::PgPoolOptions;
 use std::error::Error as StdErr;
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn StdErr>> {
-    let pool = {
+    let db_url = {
         let username = std::env::var("DB_USER").expect("`DB_USER` 환경변수가 없음.");
         let password = std::env::var("DB_PASSWORD").expect("`DB_PASSWORD` 환경 변수가 없음");
         let host = std::env::var("DB_HOST").expect("`DB_HOST` 환경 변수가 없음");
@@ -16,10 +15,11 @@ async fn main() -> Result<(), Box<dyn StdErr>> {
                     .expect("`DB_PORT` 환경 변수를 숫자로 변환할 수 없음")
             })
             .unwrap_or(5432);
-        let database_url = format!("postgresql://{username}:{password}@{host}:{port}");
+        let name = std::env::var("DB_NAME").expect("`DB_NAME` 환경변수가 없음.");
 
-        PgPoolOptions::new().connect(&database_url).await.unwrap()
+        format!("postgresql://{username}:{password}@{host}:{port}/{name}")
     };
+    let pool = db::db_init(&db_url).await?;
 
     // 법원 간행판결 검색
     let published = CourtPrecedentSearchParam::default()
@@ -40,26 +40,26 @@ async fn main() -> Result<(), Box<dyn StdErr>> {
     if let Ok(data) = published {
         // 법원 판결을 데이터베이스에 입력
         for i in data.iter() {
-            db::insert_court_case(&pool, i).await?
+            db::court::insert(&pool, i).await?
         }
 
         // 이 중 판례공보 번호가 있는 판례를 분류해서
         // 판례공보 데이터베이스에 입력
         for i in data.iter().filter(|item| item.bulletin_code.is_some()) {
-            db::insert_court_bulletin(&pool, i).await?
+            db::court::insert_bulletin(&pool, i).await?
         }
     }
 
     if let Ok(data) = en_banc {
         // 법원 전원합의체 판결을 데이터베이스에 입력
         for i in data.iter() {
-            db::insert_court_case(&pool, i).await?
+            db::court::insert(&pool, i).await?
         }
 
         // 이 중 판례공보 번호가 있는 판례를 분류해서
         // 판례공보 데이터베이스에 입력
         for i in data.iter().filter(|item| item.bulletin_code.is_some()) {
-            db::insert_court_bulletin(&pool, i).await?
+            db::court::insert_bulletin(&pool, i).await?
         }
     }
 
