@@ -1,3 +1,4 @@
+use super::RecordType;
 use crate::{
     traits::HasUrl,
     util::{integer_date_to_naive_date, replace_middle_dot},
@@ -6,9 +7,11 @@ use crate::{
 use chrono::NaiveDate;
 use serde::{de::Deserializer, Deserialize, Serialize};
 
-use super::RecordType;
+#[cfg(feature = "sqlx")]
+use sqlx::FromRow;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
+#[cfg_attr(feature = "sqlx", derive(FromRow))]
 pub struct ConstitutionalPrecedent {
     #[serde(alias = "docId")]
     #[serde(deserialize_with = "get_id")]

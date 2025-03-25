@@ -10,7 +10,11 @@ use serde::{Deserialize, Deserializer, Serialize};
 use serde_json::{json, Value};
 use url::Url;
 
+#[cfg(feature = "sqlx")]
+use sqlx::FromRow;
+
 #[derive(Debug, Deserialize, Serialize)]
+#[cfg_attr(feature = "sqlx", derive(FromRow))]
 pub struct CourtPrecedent {
     /// 사법정보포털 일련번호
     #[serde(alias = "jisCntntsSrno")]
