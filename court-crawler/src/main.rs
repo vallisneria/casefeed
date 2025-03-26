@@ -40,26 +40,45 @@ async fn main() -> Result<(), Box<dyn StdErr>> {
     if let Ok(data) = published {
         // 법원 판결을 데이터베이스에 입력
         for i in data.iter() {
-            db::court::insert(&pool, i).await?
+            print!("{} {} ", i.court_name, i.case_code);
+
+            match db::court::insert(&pool, i).await {
+                Ok(_) => println!("입력 성공"),
+                Err(err) => println!("입력 실패: {err}"),
+            }
         }
 
         // 이 중 판례공보 번호가 있는 판례를 분류해서
         // 판례공보 데이터베이스에 입력
         for i in data.iter().filter(|item| item.bulletin_code.is_some()) {
-            db::court::insert_bulletin(&pool, i).await?
+            print!("{:?} ", i.bulletin_code);
+
+            match db::court::insert_bulletin(&pool, i).await {
+                Ok(_) => println!("입력 성공"),
+                Err(err) => println!("입력 실패: {err}"),
+            }
         }
     }
 
     if let Ok(data) = en_banc {
         // 법원 전원합의체 판결을 데이터베이스에 입력
         for i in data.iter() {
-            db::court::insert(&pool, i).await?
+            print!("{} {}", i.court_name, i.case_code);
+
+            match db::court::insert(&pool, i).await {
+                Ok(_) => println!("입력 성공"),
+                Err(err) => println!("입력 실패: {err}"),
+            }
         }
 
         // 이 중 판례공보 번호가 있는 판례를 분류해서
         // 판례공보 데이터베이스에 입력
         for i in data.iter().filter(|item| item.bulletin_code.is_some()) {
-            db::court::insert_bulletin(&pool, i).await?
+            print!("{:?}", i.bulletin_code);
+            match db::court::insert_bulletin(&pool, i).await {
+                Ok(_) => println!("입력 성공"),
+                Err(err) => println!("입력 실패: {err}"),
+            }
         }
     }
 

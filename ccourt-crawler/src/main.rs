@@ -32,7 +32,12 @@ async fn main() -> Result<(), Box<dyn StdErr>> {
     if let Ok(data) = en_banc {
         // 헌재 전원합의체 판결을 데이터베이스에 입력
         for i in data.iter() {
-            db::constitutional_court::insert(&pool, i).await?
+            let db_insert = db::constitutional_court::insert(&pool, i).await;
+
+            match db_insert {
+                Ok(_) => println!("헌법재판소 {} 입력 성공", i.case_code),
+                Err(err) => println!("헌법재판소 {} 입력 실패: {err}", i.case_code),
+            }
         }
     }
 
