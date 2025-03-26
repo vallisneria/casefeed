@@ -1,8 +1,8 @@
 # 웹 서비스 설정
 webService:
   image:
-    repository: nginx
-    tag: latest
+    repository: "registry.gitlab.com/vallisneria/casefeed/casefeed-web"
+    tag: d6862ba
     pullPolicy: IfNotPresent
   replicaCount: 1
   resources:
@@ -69,13 +69,13 @@ postgresql:
           echo "Hello, World!"
 
         01_init.sql: |
-          CREATE TABLE IF NOT EXISTS casefeed.court_case (
+          CREATE TABLE IF NOT EXISTS court_case (
             collected_time TIMESTAMPTZ NOT NULL default now (), -- 이 판례를 처음으로 발견한 시간
+            id BIGINT NOT NULL,
             case_title TEXT NOT NULL,
             case_subtitle TEXT,
             case_code TEXT NOT NULL,
             court_name TEXT NOT NULL,
-            case_type TEXT NOT NULL,
             decision_date DATE NOT NULL,
             en_banc BOOLEAN NOT NULL,
             decision_type TEXT NOT NULL,
@@ -83,8 +83,9 @@ postgresql:
             PRIMARY key (court_name, case_code)
           );
 
-          CREATE TABLE IF NOT EXISTS casefeed.constitutional_case (
+          CREATE TABLE IF NOT EXISTS constitutional_case (
             collected_time TIMESTAMPTZ NOT NULL default now (), -- 이 판례를 처음으로 발견한 시간
+            id BIGINT NOT NULL,
             case_title TEXT NOT NULL,
             case_subtitle TEXT,
             case_code TEXT NOT NULL PRIMARY KEY,
@@ -94,7 +95,7 @@ postgresql:
             judgement_note TEXT[] -- 결정요지
           );
 
-          CREATE TABLE IF NOT EXISTS casefeed.court_bulletin (
+          CREATE TABLE IF NOT EXISTS court_bulletin (
             collected_time TIMESTAMPTZ NOT NULL default now (), -- 해당 판례가 공보에 포함된다는 것을 처음으로 발견한 시간
             court_name TEXT NOT NULL,
             case_code TEXT NOT NULL,
