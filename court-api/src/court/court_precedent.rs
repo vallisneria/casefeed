@@ -19,6 +19,7 @@ pub struct CourtPrecedent {
     /// 사법정보포털 일련번호
     #[serde(alias = "jisCntntsSrno")]
     #[serde(deserialize_with = "string_to_u64")]
+    #[cfg_attr(feature = "sqlx", sqlx(try_from = "i64"))]
     pub id: u64,
 
     /// 사건명
@@ -46,6 +47,7 @@ pub struct CourtPrecedent {
     pub en_bank: bool,
 
     #[serde(alias = "adjdTypNm")]
+    #[cfg_attr(feature = "sqlx", sqlx(try_from = "String"))]
     pub decision_type: DecisionType,
 }
 

@@ -15,6 +15,7 @@ use sqlx::FromRow;
 pub struct ConstitutionalPrecedent {
     #[serde(alias = "docId")]
     #[serde(deserialize_with = "get_id")]
+    #[cfg_attr(feature = "sqlx", sqlx(try_from = "i64"))]
     pub id: u64,
 
     #[serde(alias = "eventName")]
@@ -38,6 +39,7 @@ pub struct ConstitutionalPrecedent {
     pub en_banc: bool,
 
     #[serde(alias = "name")]
+    #[cfg_attr(feature = "sqlx", sqlx(try_from = "String"))]
     pub record_type: RecordType,
 
     #[serde(alias = "judgementNote")]

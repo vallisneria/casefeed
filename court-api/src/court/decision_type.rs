@@ -26,3 +26,22 @@ impl Display for DecisionType {
         write!(f, "{}", result)
     }
 }
+
+impl From<DecisionType> for String {
+    fn from(value: DecisionType) -> Self {
+        format!("{value}")
+    }
+}
+
+impl TryFrom<String> for DecisionType {
+    type Error = ();
+
+    fn try_from(value: String) -> Result<Self, Self::Error> {
+        match value.as_str() {
+            "판결" => Ok(Self::Judgement),
+            "결정" => Ok(Self::Decision),
+            "명령" => Ok(Self::Order),
+            _ => Err(()),
+        }
+    }
+}

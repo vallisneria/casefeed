@@ -1,9 +1,10 @@
 use serde::{Deserialize, Serialize};
 use std::fmt::Display;
 
-#[derive(Debug, Clone, Copy, Deserialize, Serialize)]
+#[derive(Debug, Clone, Copy, Default, Deserialize, Serialize)]
 pub enum RecordType {
     /// 결정문
+    #[default]
     #[serde(rename = "결정문")]
     DecisionDocument,
 
@@ -25,5 +26,18 @@ impl Display for RecordType {
         };
 
         write!(f, "{}", result)
+    }
+}
+
+impl TryFrom<String> for RecordType {
+    type Error = ();
+
+    fn try_from(value: String) -> Result<Self, Self::Error> {
+        match value.as_str() {
+            "결정문" => Ok(Self::DecisionDocument),
+            "공보" => Ok(Self::Bulletin),
+            "판례집" => Ok(Self::Casebook),
+            _ => Err(()),
+        }
     }
 }
