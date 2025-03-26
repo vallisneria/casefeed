@@ -15,8 +15,8 @@ pub struct CourtPrecedentDB {
 }
 
 pub async fn insert(pool: &PgPool, prec: &CourtPrecedent) -> Result<(), Error> {
-    let query = "INSERT INTO court_case (case_code, court_name, case_title, case_subtitle, decision_date, en_banc, decision_type, summary)
-        VALUES ($1, $2, $3, $4, $5, $6, $7, $8) \
+    let query = "INSERT INTO court_case (case_code, court_name, case_title, case_subtitle, decision_date, en_banc, decision_type, summary, id)
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) \
         ON CONFLICT (court_name, case_code) DO NOTHING;";
 
     sqlx::query(query)
@@ -28,6 +28,7 @@ pub async fn insert(pool: &PgPool, prec: &CourtPrecedent) -> Result<(), Error> {
         .bind(&prec.en_bank)
         .bind(prec.decision_type.to_string())
         .bind(prec.get_summary().await?)
+        .bind(prec.id as i64)
         .execute(pool)
         .await?;
 
