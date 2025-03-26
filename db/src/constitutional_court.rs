@@ -1,5 +1,5 @@
 use crate::Error;
-use chrono::{DateTime, NaiveDate, Utc};
+use chrono::{DateTime, Utc};
 use court_api::ConstitutionalPrecedent;
 use sqlx::postgres::PgPool;
 use sqlx::FromRow;
@@ -7,18 +7,14 @@ use sqlx::FromRow;
 #[derive(Debug, FromRow)]
 pub struct ConstitutionalPrecedentDB {
     pub collected_time: DateTime<Utc>,
-    pub case_title: String,
-    pub case_subtitle: Option<String>,
-    pub case_code: String,
-    pub decision_date: NaiveDate,
-    pub en_banc: bool,
-    pub record_type: String,
-    pub judgement_note: Vec<String>,
+
+    #[sqlx(flatten)]
+    pub precedent: ConstitutionalPrecedent,
 }
 
 pub async fn insert(pool: &PgPool, prec: &ConstitutionalPrecedent) -> Result<(), Error> {
     let query = "INSERT INTO constitutional_case (case_title, case_subtitle, case_code, en_banc, record_type, decision_date, judgement_note) \
-        VALUES ($1, $2, $3, $4 $5, $6, $7);";
+        VALUES ($1, $2, $3, $4, $5, $6, $7);";
 
     sqlx::query(query)
         .bind(&prec.case_title)
