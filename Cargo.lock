@@ -192,8 +192,10 @@ dependencies = [
  "court-api",
  "db",
  "rss",
+ "serde",
  "sqlx",
  "tokio",
+ "url",
 ]
 
 [[package]]
