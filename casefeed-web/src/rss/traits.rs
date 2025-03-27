@@ -39,12 +39,18 @@ impl Rss for CourtPrecedentDBWrapper {
                 _ => " 선고",
             };
 
+            let en_banc = match self.body.precedent.en_banc {
+                true => "전원합의체 ",
+                false => "",
+            };
+
             format!(
-                "{} {}{} {} {}",
+                "{} {}{} {} {}{}",
                 self.body.precedent.court_name,
                 date,
                 sungo,
                 self.body.precedent.case_code,
+                en_banc,
                 self.body.precedent.decision_type
             )
         };
@@ -89,6 +95,7 @@ impl Into<Item> for CourtPrecedentDBWrapper {
         ItemBuilder::default()
             .title(self.title())
             .description(self.description())
+            .pub_date(self.pub_date())
             .link(Some(self.link().as_str().to_string()))
             .guid(self.guid())
             .build()
@@ -163,7 +170,9 @@ impl Into<Item> for ConstitutionalPrecedentDBWrapper {
         ItemBuilder::default()
             .title(self.title())
             .description(self.description())
+            .pub_date(self.pub_date())
             .link(Some(self.link().as_str().to_string()))
+            .guid(self.guid())
             .build()
     }
 }
