@@ -50,7 +50,7 @@ pub async fn insert_bulletin(pool: &PgPool, prec: &CourtPrecedent) -> Result<(),
 }
 
 pub async fn select(pool: &PgPool, limit: i32) -> Result<Vec<CourtPrecedentDB>, Error> {
-    let query = "SELECT a.* FROM court_case AS a \
+    let query = "SELECT a.*, b.bulletin_code FROM court_case AS a \
         INNER JOIN court_bulletin as b \
         ON a.court_name = b.court_name AND a.case_code = b.case_code \
         LIMIT $1";
