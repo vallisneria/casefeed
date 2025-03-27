@@ -16,8 +16,7 @@ async fn main() {
                     .expect("`DB_PORT` 환경 변수를 숫자로 변환할 수 없음")
             })
             .unwrap_or(5432);
-        let name = std::env::var("DB_NAME").expect("`DB_NAME` 환경변수가 없음.");
-
+        let name = std::env::var("DB_NAME").unwrap_or(String::new());
         format!("postgresql://{username}:{password}@{host}:{port}/{name}")
     };
     let pool = db::db_init(&db_url).await.unwrap();
@@ -31,6 +30,6 @@ async fn main() {
         )
         .with_state(pool);
 
-    let listener = tokio::net::TcpListener::bind("0.0.0.0:3000").await.unwrap();
+    let listener = tokio::net::TcpListener::bind("0.0.0.0:80").await.unwrap();
     axum::serve(listener, app).await.unwrap();
 }
