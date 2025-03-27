@@ -21,7 +21,11 @@ pub async fn court_bulletin(
     let length: i32 = param.length.unwrap_or(40) as i32;
     let db_response = db::court::select(&pool, length).await;
     let result = db_response
-        .map_err(|_err| (StatusCode::INTERNAL_SERVER_ERROR, "Internal Server Error"))?
+        .map_err(|_err| {
+            println!("{_err}");
+
+            (StatusCode::INTERNAL_SERVER_ERROR, "Internal Server Error.")
+        })?
         .into_iter()
         .map(|prec_db| CourtPrecedentDBWrapper {
             body: prec_db,
