@@ -25,7 +25,7 @@ pub async fn insert(pool: &PgPool, prec: &CourtPrecedent) -> Result<(), Error> {
         .bind(&prec.case_title)
         .bind(&prec.case_subtitle)
         .bind(&prec.decision_date)
-        .bind(&prec.en_bank)
+        .bind(&prec.en_banc)
         .bind(prec.decision_type.to_string())
         .bind(prec.get_summary().await?)
         .bind(prec.id as i64)

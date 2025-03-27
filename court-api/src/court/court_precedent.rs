@@ -43,8 +43,8 @@ pub struct CourtPrecedent {
     pub decision_date: NaiveDate,
 
     /// 전원합의체 여부
-    #[serde(alias = "jdcpctGrCd", deserialize_with = "is_enbank")]
-    pub en_bank: bool,
+    #[serde(alias = "jdcpctGrCd", deserialize_with = "is_enbanc")]
+    pub en_banc: bool,
 
     #[serde(alias = "adjdTypNm")]
     #[cfg_attr(feature = "sqlx", sqlx(try_from = "String"))]
@@ -136,7 +136,7 @@ where
     }
 }
 
-fn is_enbank<'de, D>(deserializer: D) -> Result<bool, D::Error>
+fn is_enbanc<'de, D>(deserializer: D) -> Result<bool, D::Error>
 where
     D: Deserializer<'de>,
 {
