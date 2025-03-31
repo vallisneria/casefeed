@@ -29,6 +29,11 @@ async fn main() {
             "/%EB%8C%80%EB%B2%95%EC%9B%90/%ED%8C%90%EB%A1%80%EA%B3%B5%EB%B3%B4",
             get(router::scourt_bulletin::court_bulletin),
         )
+        // /헌법재판소/판례공보
+        .route(
+            "/%ED%97%8C%EB%B2%95%EC%9E%AC%ED%8C%90%EC%86%8C/%ED%8C%90%EB%A1%80%EA%B3%B5%EB%B3%B4",
+            get(router::ccourt_bulletin::ccourt_bulletin),
+        )
         .with_state(pool);
 
     let listener = tokio::net::TcpListener::bind("0.0.0.0:80").await.unwrap();
