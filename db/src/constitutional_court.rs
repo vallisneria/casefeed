@@ -32,6 +32,19 @@ pub async fn insert(pool: &PgPool, prec: &ConstitutionalPrecedent) -> Result<(),
     Ok(())
 }
 
+pub async fn insert_bulletin(pool: &PgPool, prec: &ConstitutionalPrecedent) -> Result<(), Error> {
+    let query = "INSERT INTO constitutional_bulletin (case_code, bulletin_code) \
+        VALUES ($1, $2) ON CONFLICT (bulletin_code) DO NOTHING";
+
+    sqlx::query(query)
+        .bind(&prec.case_code)
+        .bind(&prec.bulletin_code)
+        .execute(pool)
+        .await?;
+
+    Ok(())
+}
+
 pub async fn select(pool: &PgPool, limit: i32) -> Result<Vec<ConstitutionalPrecedentDB>, Error> {
     let query = "SELECT * FROM court_case LIMIT $1;";
     let db_response = sqlx::query_as(query).bind(limit).fetch_all(pool).await?;
