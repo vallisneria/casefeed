@@ -42,6 +42,9 @@ pub struct ConstitutionalPrecedent {
     #[cfg_attr(feature = "sqlx", sqlx(try_from = "String"))]
     pub record_type: RecordType,
 
+    #[serde(deserialize_with = "bulletin_code")]
+    pub bulletin_code: Option<String>,
+
     #[serde(alias = "judgementNote")]
     #[serde(deserialize_with = "judgement_note")]
     #[serde(default)]
@@ -101,6 +104,21 @@ where
 {
     let s: String = Deserialize::deserialize(deserializer)?;
     Ok(s == "전원재판부")
+}
+
+fn bulletin_code<'de, D>(deserializer: D) -> Result<Option<String>, D::Error>
+where
+    D: Deserializer<'de>,
+{
+    #[derive(Deserialize)]
+    struct Bulletin {
+        volume: String,
+        pages: String,
+    }
+
+    let s: Bulletin = Deserialize::deserialize(deserializer)?;
+
+    Ok(Some(format!("헌공 제{}호, {}", s.volume, s.pages)))
 }
 
 fn judgement_note<'de, D>(deserializer: D) -> Result<Option<Vec<String>>, D::Error>
