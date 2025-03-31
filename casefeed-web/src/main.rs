@@ -23,6 +23,7 @@ async fn main() {
 
     let app = Router::new()
         .route("/", get(router::index::index))
+        .route("/favicon.ico", get(router::index::favicon))
         // /대법원/판례공보
         .route(
             "/%EB%8C%80%EB%B2%95%EC%9B%90/%ED%8C%90%EB%A1%80%EA%B3%B5%EB%B3%B4",

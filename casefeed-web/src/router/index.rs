@@ -1,3 +1,6 @@
+use axum::http::{HeaderMap, HeaderValue, StatusCode};
+use axum::response::IntoResponse;
+
 pub async fn index() -> &'static str {
     r"Casefeed [beta]
 
@@ -7,4 +10,13 @@ pub async fn index() -> &'static str {
 대법원 판례공보: https://casefeed.kr/대법원/판례공보
 헌법재판소 전원재판부 판례: https://casefeed.kr/헌법재판소/전원재판부
 "
+}
+
+pub async fn favicon() -> impl IntoResponse {
+    let favicon_data = include_bytes!("../../static/favicon.ico");
+
+    let mut headers = HeaderMap::new();
+    headers.insert("Content-Type", HeaderValue::from_static("image/x-icon"));
+
+    (StatusCode::OK, headers, favicon_data.to_vec())
 }
