@@ -46,7 +46,10 @@ pub async fn insert_bulletin(pool: &PgPool, prec: &ConstitutionalPrecedent) -> R
 }
 
 pub async fn select(pool: &PgPool, limit: i32) -> Result<Vec<ConstitutionalPrecedentDB>, Error> {
-    let query = "SELECT * FROM court_case LIMIT $1;";
+    let query = "SELECT a.*, b.bulletin_code FROM constitutional_case AS A \
+        INNER JOIN constitutional_bulletin AS b \
+        ON a.case_code = b.case_code \
+        LIMIT $1;";
     let db_response = sqlx::query_as(query).bind(limit).fetch_all(pool).await?;
 
     Ok(db_response)
