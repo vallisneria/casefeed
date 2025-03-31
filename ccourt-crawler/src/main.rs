@@ -1,4 +1,4 @@
-use court_api::{BenchType, ConstitutionalPrecedentSearchParam};
+use court_api::{BenchType, ConstitutionalPrecedentSearchParam, RecordType};
 use db;
 use sqlx::postgres::PgPoolOptions;
 use std::error::Error as StdErr;
@@ -37,6 +37,18 @@ async fn main() -> Result<(), Box<dyn StdErr>> {
             match db_insert {
                 Ok(_) => println!("헌법재판소 {} 입력 성공", i.case_code),
                 Err(err) => println!("헌법재판소 {} 입력 실패: {err}", i.case_code),
+            }
+        }
+
+        for i in data
+            .iter()
+            .filter(|prec| prec.bulletin_code.is_some() && prec.record_type == RecordType::Bulletin)
+        {
+            let db_insert = db::constitutional_court::insert_bulletin(&pool, i).await;
+
+            match db_insert {
+                Ok(_) => println!("헌법재판소 {:?} 입력 성공", i.bulletin_code),
+                Err(err) => println!("헌법재판소 {:?} 입력 실패: {err}", i.bulletin_code),
             }
         }
     }
