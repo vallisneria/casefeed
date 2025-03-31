@@ -2,7 +2,7 @@
 webService:
   image:
     repository: "registry.gitlab.com/vallisneria/casefeed/casefeed-web"
-    tag: d6862ba
+    tag: 1dccf66
     pullPolicy: IfNotPresent
   replicaCount: 1
   resources:
@@ -22,7 +22,7 @@ dataCollectors:
     enabled: true
     image:
       repository: "registry.gitlab.com/vallisneria/casefeed/court-crawler"
-      tag: latest
+      tag: 1dccf66
       pullPolicy: IfNotPresent
     schedule: "*/5 * * * *"
     resources:
@@ -38,7 +38,7 @@ dataCollectors:
     enabled: true
     image:
       repository: "registry.gitlab.com/vallisneria/casefeed/ccourt-crawler"
-      tag: latest
+      tag: 1dccf66
       pullPolicy: IfNotPresent
     schedule: "*/5 * * * *"
     resources:
@@ -102,4 +102,12 @@ postgresql:
             bulletin_code TEXT NOT NULL PRIMARY KEY,
             UNIQUE (court_name, case_code),
             FOREIGN KEY (court_name, case_code) REFERENCES court_case (court_name, case_code) ON DELETE CASCADE
+          );
+
+          CREATE TABLE IF NOT EXISTS constitutional_bulletin (
+            collected_time TIMESTAMPTZ NOT NULL default now (), -- 해당 판례가 공보에 포함된다는 것을 처음으로 발견한 시간
+            case_code TEXT NOT NULL,
+            bulletin_code TEXT NOT NULL PRIMARY KEY,
+            UNIQUE (bulletin_code),
+            FOREIGN KEY (case_code) REFERENCES court_case (case_code) ON DELETE CASCADE
           );
