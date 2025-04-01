@@ -120,7 +120,7 @@ impl HasUrl for ConstitutionalPrecedent {
             CaseProvider::Casenote => {
                 format!("https://casenote.kr/헌법재판소/{}", case_code)
             }
-            CaseProvider::Lbox => format!("https://lbox.kr/v2/헌법재판소/{}", case_code),
+            CaseProvider::Lbox => format!("https://lbox.kr/v2/case/헌법재판소/{}", case_code),
             CaseProvider::Bigcase => {
                 format!("https://bigcase.ai/cases/헌법재판소/{}", case_code)
             }

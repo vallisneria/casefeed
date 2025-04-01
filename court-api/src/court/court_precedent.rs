@@ -79,7 +79,10 @@ impl HasUrl for CourtPrecedent {
                 format!("https://casenote.kr/{}/{}", self.court_name, self.case_code)
             }
             CaseProvider::Lbox => {
-                format!("https://lbox.kr/v2/{}/{}", self.court_name, self.case_code)
+                format!(
+                    "https://lbox.kr/v2/case/{}/{}",
+                    self.court_name, self.case_code
+                )
             }
             CaseProvider::Bigcase => {
                 format!(
