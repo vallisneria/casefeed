@@ -143,7 +143,7 @@ impl Rss for ConstitutionalPrecedentDBWrapper {
                 .map(|note| format!("<p>{note}</p>"))
                 .collect::<Vec<String>>()
                 .join("");
-            format!("<h2>판시사항<h2>{judgement_note_html}")
+            format!("<h2>판시사항</h2>{judgement_note_html}")
         } else {
             String::new()
         }
