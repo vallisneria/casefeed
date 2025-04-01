@@ -9,11 +9,14 @@ pub enum CaseProvider {
 
     /// 케이스노트: https://casenote.kr
     #[default]
+    #[serde(alias = "casenote", alias = "케이스노트")]
     Casenote,
 
     /// 엘박스: https://lbox.kr
+    #[serde(alias = "lbox", alias = "엘박스")]
     Lbox,
 
     /// 빅케이스: https://bigcase.ai
+    #[serde(alias = "bigcase", alias = "빅케이스")]
     Bigcase,
 }
