@@ -7,6 +7,7 @@ use serde::Deserialize;
 use sqlx::postgres::PgPool;
 
 #[derive(Debug, Deserialize)]
+#[serde(rename_all = "kebab-case")]
 pub struct QueryParam {
     length: Option<u8>,
 
