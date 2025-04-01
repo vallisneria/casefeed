@@ -140,7 +140,7 @@ impl Rss for ConstitutionalPrecedentDBWrapper {
         if let Some(judgement_note) = self.body.precedent.judgement_note.as_ref() {
             let judgement_note_html = judgement_note
                 .iter()
-                .map(|note| format!("<p>{note}</>"))
+                .map(|note| format!("<p>{note}</p>"))
                 .collect::<Vec<String>>()
                 .join("");
             format!("<h2>판시사항<h2>{judgement_note_html}")
