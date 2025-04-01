@@ -12,6 +12,7 @@ use sqlx::FromRow;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[cfg_attr(feature = "sqlx", derive(FromRow))]
+#[serde(from = "ConstitutionalPrecedentHelper")]
 pub struct ConstitutionalPrecedent {
     #[serde(alias = "docId")]
     #[serde(deserialize_with = "get_id")]
@@ -42,13 +43,72 @@ pub struct ConstitutionalPrecedent {
     #[cfg_attr(feature = "sqlx", sqlx(try_from = "String"))]
     pub record_type: RecordType,
 
-    #[serde(deserialize_with = "bulletin_code")]
     pub bulletin_code: Option<String>,
 
     #[serde(alias = "judgementNote")]
     #[serde(deserialize_with = "judgement_note")]
     #[serde(default)]
     pub judgement_note: Option<Vec<String>>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct ConstitutionalPrecedentHelper {
+    #[serde(alias = "docId")]
+    #[serde(deserialize_with = "get_id")]
+    pub id: u64,
+
+    #[serde(alias = "eventName")]
+    #[serde(deserialize_with = "case_title")]
+    pub case_title: String,
+
+    #[serde(default)]
+    #[serde(alias = "eventNickname")]
+    #[serde(deserialize_with = "case_subtitle")]
+    pub case_subtitle: Option<String>,
+
+    #[serde(alias = "eventNo")]
+    pub case_code: String,
+
+    #[serde(alias = "date")]
+    #[serde(deserialize_with = "integer_date_to_naive_date")]
+    pub decision_date: NaiveDate,
+
+    #[serde(alias = "justiceDepart")]
+    #[serde(deserialize_with = "is_enbanc")]
+    pub en_banc: bool,
+
+    #[serde(alias = "name")]
+    pub record_type: RecordType,
+
+    pub pages: Option<String>,
+
+    pub volume: Option<String>,
+
+    #[serde(alias = "judgementNote")]
+    #[serde(deserialize_with = "judgement_note")]
+    #[serde(default)]
+    pub judgement_note: Option<Vec<String>>,
+}
+
+impl From<ConstitutionalPrecedentHelper> for ConstitutionalPrecedent {
+    fn from(value: ConstitutionalPrecedentHelper) -> Self {
+        let bulletin_code = match (value.volume, value.pages) {
+            (Some(vol), Some(pa)) => Some(format!("헌공{},{}", vol, pa)),
+            _ => None,
+        };
+
+        Self {
+            id: value.id,
+            case_title: value.case_title,
+            case_subtitle: value.case_subtitle,
+            case_code: value.case_code,
+            decision_date: value.decision_date,
+            en_banc: value.en_banc,
+            record_type: value.record_type,
+            bulletin_code,
+            judgement_note: value.judgement_note,
+        }
+    }
 }
 
 impl HasUrl for ConstitutionalPrecedent {
@@ -106,21 +166,6 @@ where
     Ok(s == "전원재판부")
 }
 
-fn bulletin_code<'de, D>(deserializer: D) -> Result<Option<String>, D::Error>
-where
-    D: Deserializer<'de>,
-{
-    #[derive(Deserialize)]
-    struct Bulletin {
-        volume: String,
-        pages: String,
-    }
-
-    let s: Bulletin = Deserialize::deserialize(deserializer)?;
-
-    Ok(Some(format!("헌공 제{}호, {}", s.volume, s.pages)))
-}
-
 fn judgement_note<'de, D>(deserializer: D) -> Result<Option<Vec<String>>, D::Error>
 where
     D: Deserializer<'de>,
@@ -137,5 +182,22 @@ where
         Ok(Some(result))
     } else {
         Ok(None)
+    }
+}
+
+#[cfg(test)]
+mod test {
+    use crate::{BenchType, ConstitutionalPrecedentSearchParam};
+
+    #[tokio::test]
+    async fn test() {
+        ConstitutionalPrecedentSearchParam::default()
+            .set_bench_type(vec![BenchType::EnBancBench])
+            .set_exclusion_keyword(vec!["불기소 처분", "기소유예처분", "국선대리인"])
+            .set_page(1)
+            .set_size(40)
+            .search()
+            .await
+            .unwrap();
     }
 }
