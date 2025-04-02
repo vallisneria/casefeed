@@ -113,7 +113,7 @@ impl Default for CourtPrecedentSearchParam {
             jdcpct_cdcs_cd: String::new(),
             start_date: NaiveDate::from_ymd_opt(1901, 1, 1),
             end_date: NaiveDate::from_ymd_opt(2099, 12, 31),
-            precedent_grade: Some(PrecedentGrade::EnBanc),
+            precedent_grade: None,
             court_name: String::new(),
             page: 1,
             jis_jdcpc_instn_dvs_cd_grp: String::new(),
