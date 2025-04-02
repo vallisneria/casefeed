@@ -51,10 +51,10 @@ pub async fn insert_bulletin(pool: &PgPool, prec: &CourtPrecedent) -> Result<(),
 
 pub async fn select_scourt(pool: &PgPool, limit: i32) -> Result<Vec<CourtPrecedentDB>, Error> {
     let query = "SELECT a.*, b.bulletin_code FROM court_case AS a \
-        WHERE a.court_name = '대법원' \
         INNER JOIN court_bulletin as b \
         ON a.court_name = b.court_name AND a.case_code = b.case_code \
-        LIMIT $1 ORDER BY a.collected_time";
+        WHERE a.court_name = '대법원' \
+        ORDER BY a.collected_time LIMIT $1";
 
     let db_response = sqlx::query_as::<_, CourtPrecedentDB>(query)
         .bind(limit)
