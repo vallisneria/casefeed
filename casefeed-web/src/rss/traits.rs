@@ -62,7 +62,7 @@ impl Rss for CourtPrecedentDBWrapper {
 
     fn description(&self) -> String {
         format!(
-            "<h2>판결요지</h2>{}",
+            "<h2>판시사항</h2>{}",
             self.body
                 .summary
                 .iter()
