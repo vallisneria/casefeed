@@ -1,6 +1,6 @@
 use crate::{error::CourtApiError, CourtPrecedent};
 
-use super::{PrecedentGrade, CourtSortType};
+use super::{CourtSortType, CourtType, PrecedentGrade};
 use crate::court::util::portal_request;
 use chrono::{Datelike, NaiveDate};
 use serde::{Serialize, Serializer};
@@ -38,7 +38,8 @@ pub struct CourtPrecedentSearchParam {
 
     /// 법원종류
     #[serde(rename(serialize = "jisJdcpcInstnDvsCd"))]
-    court_type: String,
+    #[serde(serialize_with = "court_type")]
+    court_type: Vec<CourtType>,
 
     jdcpct_cdcs_cd: String,
 
@@ -108,7 +109,7 @@ impl Default for CourtPrecedentSearchParam {
             case_title: String::new(),
             referance_law: String::new(),
             search_scope: String::new(),
-            court_type: String::new(),
+            court_type: Vec::new(),
             jdcpct_cdcs_cd: String::new(),
             start_date: NaiveDate::from_ymd_opt(1901, 1, 1),
             end_date: NaiveDate::from_ymd_opt(2099, 12, 31),
@@ -188,6 +189,11 @@ impl CourtPrecedentSearchParam {
     /// 검색어의 범위를 설정하는 함수
     pub fn set_search_scope() {
         unimplemented!()
+    }
+
+    pub fn set_court_type(mut self, value: Vec<CourtType>) -> Self {
+        self.court_type = value;
+        self
     }
 
     /// 검색할 판례의 선고일자 시작점을 설정하는 함수.
@@ -346,4 +352,21 @@ where
     } else {
         s.serialize_str("")
     }
+}
+
+fn court_type<S>(x: &Vec<CourtType>, s: S) -> Result<S::Ok, S::Error>
+where
+    S: Serializer,
+{
+    let result = x
+        .iter()
+        .map(|item| match item {
+            CourtType::SupremeCourt => "01",
+            CourtType::HighCourt => "03",
+            CourtType::LowerCourt => "04",
+        })
+        .collect::<Vec<&str>>()
+        .join("|");
+
+    s.serialize_str(&result)
 }

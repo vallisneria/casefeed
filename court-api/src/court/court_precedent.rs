@@ -36,6 +36,7 @@ pub struct CourtPrecedent {
     pub bulletin_code: Option<String>,
 
     #[serde(alias = "cortNm")]
+    #[serde(deserialize_with = "court_name")]
     pub court_name: String,
 
     #[serde(alias = "prnjdgYmd")]
@@ -137,6 +138,16 @@ where
         "[공보불게재]" | "" => Ok(None),
         _ => Ok(Some(remove_bracket(&s))),
     }
+}
+
+fn court_name<'de, D>(deserializer: D) -> Result<String, D::Error>
+where
+    D: Deserializer<'de>,
+{
+    let s: String = Deserialize::deserialize(deserializer)?;
+
+    // 법원명으로 검색할 경우 검색 결과에 <strong> 태그가 붙음
+    Ok(s.replace("<strong>", "").replace("</strong>", ""))
 }
 
 fn is_enbanc<'de, D>(deserializer: D) -> Result<bool, D::Error>

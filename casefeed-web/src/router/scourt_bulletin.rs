@@ -20,7 +20,7 @@ pub async fn court_bulletin(
     State(pool): State<PgPool>,
 ) -> Result<String, (StatusCode, &'static str)> {
     let length: i32 = param.length.unwrap_or(40) as i32;
-    let db_response = db::court::select(&pool, length).await;
+    let db_response = db::court::select_scourt(&pool, length).await;
     let result = db_response
         .map_err(|_err| {
             println!("{_err}");

@@ -13,6 +13,9 @@ pub enum DecisionType {
 
     #[serde(rename = "명령", alias = "전원합의체 명령")]
     Order,
+
+    #[serde(rename = "기타")]
+    Etc,
 }
 
 impl Display for DecisionType {
@@ -21,6 +24,7 @@ impl Display for DecisionType {
             Self::Judgement => "판결",
             Self::Decision => "결정",
             Self::Order => "명령",
+            Self::Etc => "기타",
         };
 
         write!(f, "{}", result)
@@ -41,7 +45,7 @@ impl TryFrom<String> for DecisionType {
             "판결" => Ok(Self::Judgement),
             "결정" => Ok(Self::Decision),
             "명령" => Ok(Self::Order),
-            _ => Err(()),
+            _ => Ok(Self::Etc),
         }
     }
 }
