@@ -54,7 +54,7 @@ pub async fn select_scourt(pool: &PgPool, limit: i32) -> Result<Vec<CourtPrecede
         INNER JOIN court_bulletin as b \
         ON a.court_name = b.court_name AND a.case_code = b.case_code \
         WHERE a.court_name = '대법원' \
-        ORDER BY a.collected_time LIMIT $1";
+        ORDER BY a.collected_time DESC LIMIT $1";
 
     let db_response = sqlx::query_as::<_, CourtPrecedentDB>(query)
         .bind(limit)
