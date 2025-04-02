@@ -49,7 +49,7 @@ pub async fn select(pool: &PgPool, limit: i32) -> Result<Vec<ConstitutionalPrece
     let query = "SELECT a.*, b.bulletin_code FROM constitutional_case AS A \
         INNER JOIN constitutional_bulletin AS b \
         ON a.case_code = b.case_code \
-        LIMIT $1;";
+        ORDER BY a.collected_time DESC LIMIT $1;";
     let db_response = sqlx::query_as(query).bind(limit).fetch_all(pool).await?;
 
     Ok(db_response)
