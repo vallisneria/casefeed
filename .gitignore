@@ -1,8 +1,10 @@
-node_modules/
-target/
-build/
-.wrangler/
 .DS_Store
-
-.vscode/
+*.db
 .zed/
+.vscode/
+target/
+*secret.yaml
+*.tgz
+
+# Added by cargo
+/target

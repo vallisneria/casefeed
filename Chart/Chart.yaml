@@ -1,0 +1,12 @@
+apiVersion: v2
+name: casefeed
+description: 법원/헌법재판소 판례공보를 RSS로 제공하는 서비스
+type: application
+version: 0.1.0
+home: https://gitlab.com/vallisneria/casefeed
+
+dependencies:
+  - name: postgresql
+    version: "16.5"
+    repository: https://charts.bitnami.com/bitnami
+    condition: postgresql.enabled

@@ -1,0 +1,105 @@
+<!doctype html>
+
+<html lang="ko">
+    <head>
+        <title>Casefeed</title>
+        <meta charset="utf-8" />
+        <link
+            rel="stylesheet"
+            href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css"
+        />
+        <style>
+            body {
+                margin-left: 1em;
+                margin-right: 1em;
+            }
+
+            .select-all {
+                -moz-user-select: all;
+                -webkit-user-select: all;
+                -ms-user-select: all;
+                user-select: all;
+            }
+        </style>
+    </head>
+
+    <body>
+        <h1>Casefeed [beta]</h1>
+        <p>법원/헌법재판소 판례공보를 RSS로 제공하는 서비스입니다.</p>
+        <p>
+            <strong>RSS란?</strong> 웹사이트의 새로운 콘텐츠를 자동으로 받아볼
+            수 있게 해주는 형식입니다. RSS 리더 프로그램을 통해 여러 사이트의 새
+            글을 한 곳에서 확인할 수 있습니다.
+        </p>
+        <h2>사용 방법</h2>
+        <p>아래 링크를 복사하여 사용하시는 RSS 리더에 추가해주세요.</p>
+
+        <ul>
+            <li>
+                <strong>대법원 판례공보</strong>:
+                <span class="select-all">
+                    https://casefeed.neria.link/대법원/판례공보
+                </span>
+            </li>
+            <li>
+                <strong>헌법재판소 판례공보</strong>:
+                <span class="select-all">
+                    https://casefeed.neria.link/헌법재판소/판례공보
+                </span>
+            </li>
+        </ul>
+
+        <h2>파라미터 설정</h2>
+        <p>위 링크를 조정하여 검색 결과를 맞춤 설정할 수 있습니다.</p>
+        <h3>사용 방법</h3>
+        <ol>
+            <li>위 기본 링크 맨 뒤에 <code>?</code>를 입력합니다.</li>
+            <li>
+                원하는 파라미터와 값을 <code>parameter=value</code> 형태로
+                입력합니다.
+            </li>
+            <li>여러 파라미터를 사용할 경우 <code>&</code>로 구분합니다.</li>
+        </ol>
+        <h3>사용 가능한 파라미터</h3>
+        <h4>length</h4>
+        <p>
+            한 번에 불러올 수 있는 판례의 개수를 설정할 수 있습니다. (0~256,
+            기본값: 40)
+        </p>
+        <p>
+            예시:
+            <code>
+                https://casefeed.neria.link/대법원/판례공보?<strong
+                    >length=100</strong
+                >
+            </code>
+        </p>
+        <h4>case-provider</h4>
+        <p>판례 링크에 사용될 서비스를 선택할 수 있습니다.</p>
+        <ul>
+            <li>
+                <code>casenote</code>:
+                <a href="https://casenote.kr">케이스노트</a> (기본값)
+            </li>
+            <li><code>lbox</code>: <a href="https://lbox.kr">엘박스</a></li>
+            <li>
+                <code>bigcase</code>: <a href="https://bigcase.ai">빅케이스</a>
+            </li>
+        </ul>
+
+        <p>
+            예시:
+            <code>
+                https://casefeed.neria.link/대법원/판례공보?<strong
+                    >case-provider=lbox</strong
+                >
+            </code>
+        </p>
+
+        <footer>
+            Casefeed는 오픈 소스 프로젝트입니다. 소스 코드는
+            <a href="https://gitlab.com/vallisneria/casefeed">여기</a>에서
+            확인할 수 있습니다.
+        </footer>
+    </body>
+</html>

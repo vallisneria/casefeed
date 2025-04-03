@@ -1,0 +1,15 @@
+[package]
+name = "casefeed-web"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+axum.workspace = true
+chrono.workspace = true
+court-api.workspace = true
+db.workspace = true
+rss.workspace = true
+serde.workspace = true
+sqlx.workspace = true
+tokio.workspace = true
+url.workspace = true
