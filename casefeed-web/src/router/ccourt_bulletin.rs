@@ -1,6 +1,6 @@
 use crate::rss::traits::ConstitutionalPrecedentDBWrapper;
 use axum::extract::{Query, State};
-use axum::http::StatusCode;
+use axum::http::{HeaderMap, HeaderValue, StatusCode};
 use court_api::CaseProvider;
 use rss::{ChannelBuilder, Item};
 use serde::Deserialize;
@@ -18,7 +18,7 @@ pub struct QueryParam {
 pub async fn ccourt_bulletin(
     Query(param): Query<QueryParam>,
     State(pool): State<PgPool>,
-) -> Result<String, (StatusCode, &'static str)> {
+) -> Result<(StatusCode, HeaderMap, String), (StatusCode, &'static str)> {
     let length = param.length.unwrap_or(40) as i32;
     let db_resp = db::constitutional_court::select(&pool, length).await;
     let result = db_resp
@@ -49,5 +49,15 @@ pub async fn ccourt_bulletin(
         )
         .build();
 
-    Ok(rss.to_string())
+    let header = {
+        let mut header = HeaderMap::new();
+        header.append(
+            "Content-Type",
+            HeaderValue::from_static("application/rss+xml; charset=utf-8"),
+        );
+
+        header
+    };
+
+    Ok((StatusCode::OK, header, rss.to_string()))
 }
