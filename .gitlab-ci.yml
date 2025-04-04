@@ -35,5 +35,5 @@ build-release:
     - apk add --no-cache make
   script:
     - echo "$CI_REGISTRY_PASSWORD" | docker login $CI_REGISTRY -u $CI_REGISTRY_USER --password-stdin
-    - make build-release-all
-    - make push-release-all
+    - make build-all-release
+    - make push-all-release
