@@ -20,10 +20,10 @@ async fn main() -> Result<(), Box<dyn StdErr>> {
     };
     let pool = db::db_init(&db_url).await?;
 
-    // 헌재 전원합의체 판결 검색
+    // 헌재 판례공보 검색
     let en_banc = ConstitutionalPrecedentSearchParam::default()
         .set_bench_type(vec![BenchType::EnBancBench])
-        .set_exclusion_keyword(vec!["불기소 처분", "기소유예처분", "국선대리인"])
+        .set_record_type(vec![RecordType::Bulletin])
         .set_page(1)
         .set_size(40)
         .search()
