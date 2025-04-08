@@ -54,7 +54,7 @@ dataCollectors:
 postgresql:
   auth:
     username: casefeed
-    password: "aaaa"
+    password: ""
     database: casefeed
 
   primary:
@@ -111,3 +111,17 @@ postgresql:
             UNIQUE (bulletin_code),
             FOREIGN KEY (case_code) REFERENCES constitutional_case (case_code) ON DELETE CASCADE
           );
+
+cloudflare-tunnel:
+  enabled: false
+  cloudflare:
+    account: ""
+    tunnelName: ""
+    tunnelId: ""
+    secret: ""
+
+  ingress:
+    - hostname: ""
+      service: ""
+
+  replicaCount: 1

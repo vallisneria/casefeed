@@ -10,3 +10,8 @@ dependencies:
     version: "16.5"
     repository: https://charts.bitnami.com/bitnami
     condition: postgresql.enabled
+
+  - name: cloudflare-tunnel
+    version: "0.3.2"
+    repository: https://cloudflare.github.io/helm-charts
+    condition: cloudflare-tunnel.enabled
