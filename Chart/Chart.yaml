@@ -2,7 +2,7 @@ apiVersion: v2
 name: casefeed
 description: 법원/헌법재판소 판례공보를 RSS로 제공하는 서비스
 type: application
-version: 1.0.0
+version: 1.0.1
 home: https://gitlab.com/vallisneria/casefeed
 
 dependencies:
