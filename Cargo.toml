@@ -2,6 +2,9 @@
 members = ["court-crawler", "casefeed-web", "court-api", "ccourt-crawler", "db"]
 resolver = "2"
 
+[workspace.package]
+license = "AGPL-3.0-or-later"
+
 [workspace.dependencies]
 axum = "0.8.1"
 chrono = { version = "0.4", features = ["serde"] }
